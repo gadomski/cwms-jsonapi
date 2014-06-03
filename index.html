@@ -1,71 +1,117 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
+
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>cwms-jsonapi by gadomski</title>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="cwms-jsonapi : Documentation for a CWMS JSON API" />
 
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>cwms-jsonapi</title>
   </head>
+
   <body>
-    <div class="wrapper">
-      <header>
-        <h1>cwms-jsonapi</h1>
-        <p>Documentation for a CWMS JSON API</p>
 
-        <p class="view"><a href="https://github.com/gadomski/cwms-jsonapi">View the Project on GitHub <small>gadomski/cwms-jsonapi</small></a></p>
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/gadomski/cwms-jsonapi">View on GitHub</a>
 
+          <h1 id="project_title">cwms-jsonapi</h1>
+          <h2 id="project_tagline">Documentation for a CWMS JSON API</h2>
 
-        <ul>
-          <li><a href="https://github.com/gadomski/cwms-jsonapi/zipball/master">Download <strong>ZIP File</strong></a></li>
-          <li><a href="https://github.com/gadomski/cwms-jsonapi/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/gadomski/cwms-jsonapi">View On <strong>GitHub</strong></a></li>
-        </ul>
-      </header>
-      <section>
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/gadomski/cwms-jsonapi/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/gadomski/cwms-jsonapi/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
         <h3>
-<a name="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages"><span class="octicon octicon-link"></span></a>Welcome to GitHub Pages.</h3>
+<a name="welcome-to-a-cwms-json-api" class="anchor" href="#welcome-to-a-cwms-json-api"><span class="octicon octicon-link"></span></a>Welcome to <em>a</em> CWMS JSON API.</h3>
 
-<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
+<p>This is the documentation for <em>a</em> (not <em>the</em>) JSON API for the <a href="https://cwms.usace.army.mil">Corps Water Management System</a>, or <strong>CWMS</strong>.
+This is <strong>not</strong> the API code itself.
+At the time of this writing, the API code is available only on the server located at <code>155.78.180.103</code> in the <code>cwmsweb</code> schema.
+This document only describes the data provided by the API.</p>
 
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
+<h3>
+<a name="schema" class="anchor" href="#schema"><span class="octicon octicon-link"></span></a>Schema</h3>
+
+<p>All data is received as JSON.</p>
+
+<pre><code>$ curl -i http://nae-rrs2.usace.army.mil:7777/pls/cwmsweb/jsonapi.locations?db_office_id=FOO
+HTTP/1.1 200 OK
+Date: Tue, 03 Jun 2014 20:09:24 GMT
+Server: Oracle-Application-Server-11g
+X-DB-Content-length: 2
+Content-Length: 2
+Content-Type: application/json
+Content-Language: en
+
+[]
 </code></pre>
 
-<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
+<p>Blank fields are included as <code>null</code> instead of being omitted.</p>
+
+<p>All timestamps are returned in ISO 8601 format:</p>
+
+<pre><code>YYYY-MM-DDTHH:MM:SSZ
+</code></pre>
 
 <h3>
-<a name="designer-templates" class="anchor" href="#designer-templates"><span class="octicon octicon-link"></span></a>Designer Templates</h3>
+<a name="url-structure" class="anchor" href="#url-structure"><span class="octicon octicon-link"></span></a>URL Structure</h3>
 
-<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
+<p>Due to the idiosyncrasies of <a href="http://docs.oracle.com/cd/B14099_19/web.1012/b14010/using.htm">mod_plsql</a>, <strong>cwms-jsonapi</strong> eschews traditional API behavior in favor of easy integration with existing PL/SQL web packages. Consequentially, an API call might look like:</p>
+
+<pre><code>http://nae-rrs2.usace.army.mil:7777/pls/cwmsweb/jsonapi.locations?db_office_id=NAE
+</code></pre>
+
+<p>Where everything after <code>http://nae-rrs2.usace.army.mil:7777/pls/cwmsweb/jsonapi</code> is used to query the API. the <code>GET</code> parameters in the URL are passed as procedure arguments in the PL/SQL backend, so misspelling <code>GET</code> parameter names will produce <code>404</code> with error messages that look suspiciously internally generated (its because they are).</p>
+
+<p>In this documentation, urls are listed with a dot, then the resource name, then the parameters, for example, if your base API url is <code>http://example.com/pls/cwmsweb/jsonapi</code>, then the URL for a list of locations would be:</p>
+
+<p><code>.locations?db_office_id=MYOFFICE</code></p>
 
 <h3>
-<a name="rather-drive-stick" class="anchor" href="#rather-drive-stick"><span class="octicon octicon-link"></span></a>Rather Drive Stick?</h3>
+<a name="http-verbs" class="anchor" href="#http-verbs"><span class="octicon octicon-link"></span></a>HTTP Verbs</h3>
 
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
-
-<h3>
-<a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
-
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
+<p>The API only accepts <code>GET</code> requests.</p>
 
 <h3>
-<a name="support-or-contact" class="anchor" href="#support-or-contact"><span class="octicon octicon-link"></span></a>Support or Contact</h3>
+<a name="locations" class="anchor" href="#locations"><span class="octicon octicon-link"></span></a>Locations</h3>
 
-<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
+<p><strong>Locations</strong> are field sites that may contain one or more sensors, some of which may produce time series data. To get a list of locations, query:</p>
+
+<pre><code>.locations?db_office_id=OFFICE_ID
+</code></pre>
+
+<h4>
+<a name="parameters" class="anchor" href="#parameters"><span class="octicon octicon-link"></span></a>Parameters</h4>
+
+<p>This is a table:</p>
+
+<h2>
+<a name="name--type--description" class="anchor" href="#name--type--description"><span class="octicon octicon-link"></span></a>Name | Type | Description</h2>
+
+<p>db_office_id | string | Required: The office id, e.g. 'NAE'.
+unit_system | string | A given location usually has two database representations, one for each unit system ('SI' or 'EN'). Default: 'SI'.</p>
       </section>
-      <footer>
-        <p>This project is maintained by <a href="https://github.com/gadomski">gadomski</a></p>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">cwms-jsonapi maintained by <a href="https://github.com/gadomski">gadomski</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
       </footer>
     </div>
-    <script src="javascripts/scale.fix.js"></script>
+
     
+
   </body>
 </html>
