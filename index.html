@@ -32,9 +32,10 @@
 <a name="welcome-to-a-cwms-json-api" class="anchor" href="#welcome-to-a-cwms-json-api"><span class="octicon octicon-link"></span></a>Welcome to <strong>a</strong> CWMS JSON API.</h3>
 
 <p>This is the documentation for <strong>a</strong> (note: not <strong>the</strong>) JSON API for the <a href="https://cwms.usace.army.mil">Corps Water Management System</a>, or <strong>CWMS</strong>.
-This is <strong>not</strong> the API code itself.
-At the time of this writing, the API code is available only on the server located at <code>155.78.180.103</code> in the <code>cwmsweb</code> schema.
-This document only describes the data provided by the API.</p>
+This API provides access to lists of locations, timeseries codes, and timeseries data.</p>
+
+<p>This API does not currently provide any sort of queryable interface &mdash; you ask for it, you're getting it all.
+A queryable interface is a likely domain for future work.</p>
 
 <h3>
 <a name="schema" class="anchor" href="#schema"><span class="octicon octicon-link"></span></a>Schema</h3>
@@ -70,7 +71,7 @@ Content-Language: en
 
 <p>Where everything after <code>http://nae-rrs2.usace.army.mil:7777/pls/cwmsweb/jsonapi</code> is used to query the API. the <code>GET</code> parameters in the URL are passed as procedure arguments in the PL/SQL backend, so misspelling <code>GET</code> parameter names will produce <code>404</code> with error messages that look suspiciously internally generated (it is because they are).</p>
 
-<p>In this documentation, urls are listed with a dot, then the resource name, then the parameters, for example, if your base API url is <code>http://example.com/pls/cwmsweb/jsonapi</code>, then the URL for a list of locations would be:</p>
+<p>In this documentation, urls are listed with a dot, then the resource name, then the parameters, for example, if your base API url is <code>http://example.com/pls/cwmsweb/jsonapi</code>, then the URL (as expressed in this documentation) for a list of locations would be:</p>
 
 <pre><code>.locations?db_office_id=MYOFFICE
 </code></pre>
@@ -78,7 +79,7 @@ Content-Language: en
 <h3>
 <a name="http-verbs" class="anchor" href="#http-verbs"><span class="octicon octicon-link"></span></a>HTTP Verbs</h3>
 
-<p>The API only accepts <code>GET</code> requests.</p>
+<p>The API only explicitly accepts <code>GET</code> requests, though it may respond to requests of other types (buyer beware).</p>
 
 <h3>
 <a name="locations" class="anchor" href="#locations"><span class="octicon octicon-link"></span></a>Locations</h3>
