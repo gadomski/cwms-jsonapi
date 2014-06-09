@@ -128,8 +128,8 @@ CREATE OR REPLACE PACKAGE BODY JSONAPI AS
       data_('unit_system') := quote(location_.unit_system);
       data_('elevation') := or_null(location_.elevation);
       data_('unit_id') := quote(location_.unit_id);
-      data_('longitude') := location_.longitude;
-      data_('latitude') := location_.latitude;
+      data_('longitude') := or_null(location_.longitude);
+      data_('latitude') := or_null(location_.latitude);
       data_('time_zone_name') := quote(location_.time_zone_name);
       data_('state_initial') := quote(location_.state_initial);
       data_('long_name') := quote(location_.long_name);
@@ -155,10 +155,10 @@ CREATE OR REPLACE PACKAGE BODY JSONAPI AS
     data_('location_id') := quote(row_.location_id);
     data_('location_type') := quote(row_.location_type);
     data_('unit_system') := quote(row_.unit_system);
-    data_('elevation') := row_.elevation;
+    data_('elevation') := or_null(row_.elevation);
     data_('unit_id') := quote(row_.unit_id);
-    data_('longtitude') := row_.longitude;
-    data_('latitude') := row_.latitude;
+    data_('longtitude') := or_null(row_.longitude);
+    data_('latitude') := or_null(row_.latitude);
     data_('time_zone_name') := quote(row_.time_zone_name);
     data_('state_initial') := quote(row_.state_initial);
     data_('long_name') := quote(row_.long_name);
@@ -196,7 +196,7 @@ CREATE OR REPLACE PACKAGE BODY JSONAPI AS
       data_('cwms_ts_id') := quote(ts.cwms_ts_id);
       data_('unit_id') := quote(ts.unit_id);
       data_('parameter_id') := quote(ts.parameter_id);
-      data_('ts_code') := ts.ts_code;
+      data_('ts_code') := or_null(ts.ts_code);
       htp_json_object(data_);
     END LOOP;
     htp_json_array_close();
@@ -217,7 +217,7 @@ CREATE OR REPLACE PACKAGE BODY JSONAPI AS
     data_('cwms_ts_id') := quote(row_.cwms_ts_id);
     data_('unit_id') := quote(row_.unit_id);
     data_('parameter_id') := quote(row_.parameter_id);
-    data_('ts_code') := row_.ts_code;
+    data_('ts_code') := or_null(row_.ts_code);
     htp_json_object(data_, FALSE);
     htp_json_object_close();
   END timeseries;
@@ -243,10 +243,10 @@ CREATE OR REPLACE PACKAGE BODY JSONAPI AS
       ELSE
         first_loop := false;
       END IF;
-      data_('ts_code') := ts.ts_code;
+      data_('ts_code') := or_null(ts.ts_code);
       data_('date_time') := format_date(ts.date_time);
       data_('value') := or_null(ts.value);
-      data_('quality_code') := ts.quality_code;
+      data_('quality_code') := or_null(ts.quality_code);
       htp_json_object(data_);
     END LOOP;
     htp_json_array_close();
