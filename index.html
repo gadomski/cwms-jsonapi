@@ -1,37 +1,34 @@
 <!DOCTYPE html>
 <html>
-
   <head>
-    <meta charset='utf-8' />
-    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-    <meta name="description" content="cwms-jsonapi : Documentation for a CWMS JSON API" />
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
 
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
 
-    <title>cwms-jsonapi</title>
+    <title>cwms-jsonapi by gadomski</title>
   </head>
 
   <body>
+    <header>
+      <div class="inner">
+        <h1>cwms-jsonapi</h1>
+        <h2>Documentation for a CWMS JSON API</h2>
+        <a href="https://github.com/gadomski/cwms-jsonapi" class="button"><small>View project on</small>GitHub</a>
+      </div>
+    </header>
 
-    <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        <header class="inner">
-          <a id="forkme_banner" href="https://github.com/gadomski/cwms-jsonapi">View on GitHub</a>
-
-          <h1 id="project_title">cwms-jsonapi</h1>
-          <h2 id="project_tagline">Documentation for a CWMS JSON API</h2>
-
-            <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/gadomski/cwms-jsonapi/zipball/master">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/gadomski/cwms-jsonapi/tarball/master">Download this project as a tar.gz file</a>
-            </section>
-        </header>
-    </div>
-
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
-        <h3>
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h3>
 <a name="welcome-to-a-cwms-json-api" class="anchor" href="#welcome-to-a-cwms-json-api"><span class="octicon octicon-link"></span></a>Welcome to <em>a</em> CWMS JSON API.</h3>
 
 <p>This is the documentation for <em>a</em> (not <em>the</em>) JSON API for the <a href="https://cwms.usace.army.mil">Corps Water Management System</a>, or <strong>CWMS</strong>.
@@ -75,7 +72,8 @@ Content-Language: en
 
 <p>In this documentation, urls are listed with a dot, then the resource name, then the parameters, for example, if your base API url is <code>http://example.com/pls/cwmsweb/jsonapi</code>, then the URL for a list of locations would be:</p>
 
-<p><code>.locations?db_office_id=MYOFFICE</code></p>
+<pre><code>.locations?db_office_id=MYOFFICE
+</code></pre>
 
 <h3>
 <a name="http-verbs" class="anchor" href="#http-verbs"><span class="octicon octicon-link"></span></a>HTTP Verbs</h3>
@@ -93,25 +91,104 @@ Content-Language: en
 <h4>
 <a name="parameters" class="anchor" href="#parameters"><span class="octicon octicon-link"></span></a>Parameters</h4>
 
-<p>This is a table:</p>
+<ul>
+<li>
+<strong>db_office_id</strong>: [string, required] The office id, e.g. 'NAE'</li>
+<li>
+<strong>unit_system</strong>: [string] A given location usually has two database representations, one for each unit system ('SI' or 'EN'), default 'SI'</li>
+</ul><h4>
+<a name="response" class="anchor" href="#response"><span class="octicon octicon-link"></span></a>Response</h4>
 
-<h2>
-<a name="name--type--description" class="anchor" href="#name--type--description"><span class="octicon octicon-link"></span></a>Name | Type | Description</h2>
+<div class="highlight highlight-json"><pre><span class="p">[</span>
+  <span class="p">{</span>
+    <span class="nt">"active_flag"</span><span class="p">:</span> <span class="s2">"T"</span><span class="p">,</span>
+    <span class="nt">"db_office_id"</span><span class="p">:</span> <span class="s2">"NAE"</span><span class="p">,</span> 
+    <span class="nt">"elevation"</span><span class="p">:</span> <span class="mf">102.12</span><span class="p">,</span>
+    <span class="nt">"longtitude"</span><span class="p">:</span> <span class="mf">-72.6219</span><span class="p">,</span>
+    <span class="nt">"latitude"</span><span class="p">:</span> <span class="mf">42.3108</span><span class="p">,</span>
+    <span class="nt">"location_id"</span><span class="p">:</span> <span class="s2">"NOR"</span><span class="p">,</span>
+    <span class="nt">"location_type"</span><span class="p">:</span> <span class="s2">"Pool Gage"</span><span class="p">,</span>
+    <span class="nt">"long_name"</span><span class="p">:</span> <span class="s2">"Connecticut River at North Hampton, MA"</span><span class="p">,</span>
+    <span class="nt">"state_initial"</span><span class="p">:</span> <span class="s2">"MA"</span><span class="p">,</span>
+    <span class="nt">"time_zone_name"</span><span class="p">:</span> <span class="s2">"US/Eastern"</span><span class="p">,</span>
+    <span class="nt">"unit_id"</span><span class="p">:</span> <span class="s2">"m"</span><span class="p">,</span>
+    <span class="nt">"unit_system"</span><span class="p">:</span> <span class="s2">"SI"</span>
+  <span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
 
-<p>db_office_id | string | Required: The office id, e.g. 'NAE'.
-unit_system | string | A given location usually has two database representations, one for each unit system ('SI' or 'EN'). Default: 'SI'.</p>
-      </section>
+<h3>
+<a name="location" class="anchor" href="#location"><span class="octicon octicon-link"></span></a>Location</h3>
+
+<p>To query a single location:</p>
+
+<pre><code>.locations?location_id=LOCATION_ID
+</code></pre>
+
+<p>At the time of this writing, the returned data for a single location has the same format of a single entry in the <code>locations</code> array, returned above.</p>
+
+<h3>
+<a name="timeseries" class="anchor" href="#timeseries"><span class="octicon octicon-link"></span></a>Timeseries</h3>
+
+<p>To query for information about all <strong>timeseries</strong> for a given location:</p>
+
+<pre><code>.timeseries?location_id=LOCATION_ID
+</code></pre>
+
+<h4>
+<a name="response-1" class="anchor" href="#response-1"><span class="octicon octicon-link"></span></a>Response</h4>
+
+<div class="highlight highlight-json"><pre><span class="p">[</span>
+  <span class="p">{</span>
+    <span class="nt">"cwms_ts_id"</span><span class="p">:</span> <span class="s2">"HUB.Stage-ICE7.Inst.6Hours.0.DCP-raw"</span><span class="p">,</span>
+    <span class="nt">"db_office_id"</span><span class="p">:</span> <span class="s2">"NAE"</span><span class="p">,</span>
+    <span class="nt">"location_id"</span><span class="p">:</span> <span class="s2">"HUB"</span><span class="p">,</span>
+    <span class="nt">"parameter_id"</span><span class="p">:</span> <span class="s2">"Stage-ICE7"</span><span class="p">,</span>
+    <span class="nt">"ts_code"</span><span class="p">:</span> <span class="mi">8578021</span><span class="p">,</span>
+    <span class="nt">"unit_id"</span><span class="p">:</span> <span class="s2">"m"</span>
+  <span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+
+<h3>
+<a name="timeseries-data" class="anchor" href="#timeseries-data"><span class="octicon octicon-link"></span></a>Timeseries Data</h3>
+
+<p>To retrieve timeseries data from a given location:</p>
+
+<pre><code>.timeseriesdata?ts_code=TS_CODE
+</code></pre>
+
+<h4>
+<a name="response-2" class="anchor" href="#response-2"><span class="octicon octicon-link"></span></a>Response</h4>
+
+<div class="highlight highlight-json"><pre><span class="p">[</span>
+  <span class="p">{</span>
+    <span class="nt">"date_time"</span><span class="p">:</span> <span class="s2">"2007-06-01T00:00:00"</span><span class="p">,</span>
+    <span class="nt">"quality_code"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="nt">"ts_code"</span><span class="p">:</span> <span class="mi">8578021</span><span class="p">,</span>
+    <span class="nt">"value"</span><span class="p">:</span> <span class="mf">489.31999999999999</span>
+  <span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/gadomski/cwms-jsonapi/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/gadomski/cwms-jsonapi/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/gadomski/cwms-jsonapi"></a> is maintained by <a href="https://github.com/gadomski">gadomski</a>.</p>
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
     </div>
 
-    <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
-        <p class="copyright">cwms-jsonapi maintained by <a href="https://github.com/gadomski">gadomski</a></p>
-        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
-      </footer>
-    </div>
-
-    
-
+  
   </body>
 </html>
