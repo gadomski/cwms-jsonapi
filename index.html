@@ -99,7 +99,7 @@ The methods of accessing each of these models are described below.
 
 <p>To get a list of locations, query:</p>
 
-<pre><code>.locations?db_office_id=OFFICE_ID
+<pre><code>.locations?db_office_id=OFFICE_ID&amp;unit_system=UNIT_SYSTEM
 </code></pre>
 
 <h4>
@@ -169,8 +169,27 @@ The methods of accessing each of these models are described below.
 
 <p>To retrieve timeseries data from a given location:</p>
 
-<pre><code>.timeseriesdata?ts_code=TS_CODE
+<pre><code>.timeseriesdata?ts_code=TS_CODE&amp;summary_interval=SUMMARY_INTERVAL
 </code></pre>
+
+<h4>
+<a name="parameters" class="anchor" href="#parameters"><span class="octicon octicon-link"></span></a>
+Parameters
+</h4>
+
+<ul>
+  <li><strong>ts_code</strong>: [integer, required] the ts code of the data stream to fetch</li>
+  <li><strong>summary_interval</strong>: [string, default = ''] a time interval over which the data will be averaged. Valid values include:
+    <ul>
+      <li>hourly</li>
+      <li>daily</li>
+      <li>weekly</li>
+      <li>monthly</li>
+    </ul>
+    If no value is specified, or an invalid value is passed, the data are not summarized.
+  </li>
+</ul>
+
 
 <h4>
 <a name="response-2" class="anchor" href="#response-2"><span class="octicon octicon-link"></span></a>Response</h4>
