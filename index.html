@@ -82,9 +82,22 @@ Content-Language: en
 <p>The API only explicitly accepts <code>GET</code> requests, though it may respond to requests of other types (buyer beware).</p>
 
 <h3>
+<a name="models" class="anchor" href="#models"><span class="octicon octicon-link"></span></a>Models</h3>
+
+<p>This API recognizes the following data models:</p>
+
+<ul>
+  <li><strong>location</strong>: a field site that may contain one or more sensors, some of which may produce time series data.</li>
+  <li><strong>time series</strong>: a single data stream of homogeneous schema and defintion.</li>
+  <li><strong>time series data</strong>: the data contained in a time series data stream.</li>
+</ul>
+
+The methods of accessing each of these models are described below.
+
+<h3>
 <a name="locations" class="anchor" href="#locations"><span class="octicon octicon-link"></span></a>Locations</h3>
 
-<p><strong>Locations</strong> are field sites that may contain one or more sensors, some of which may produce time series data. To get a list of locations, query:</p>
+<p>To get a list of locations, query:</p>
 
 <pre><code>.locations?db_office_id=OFFICE_ID
 </code></pre>
