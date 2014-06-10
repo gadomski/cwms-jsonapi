@@ -12,8 +12,10 @@ CREATE OR REPLACE PACKAGE JSONAPI AS
 
   PROCEDURE timeseries(ts_code IN NUMBER);
     
-  PROCEDURE timeseriesdata(ts_code IN NUMBER);
-  
+  PROCEDURE timeseriesdata(ts_codes IN VARCHAR2,
+                           summary_interval IN VARCHAR2 DEFAULT '');
+
+
 END JSONAPI;
 /
 
@@ -222,20 +224,50 @@ CREATE OR REPLACE PACKAGE BODY JSONAPI AS
     htp_json_object_close();
   END timeseries;
   
-  PROCEDURE timeseriesdata(ts_code IN NUMBER) AS
+  PROCEDURE timeseriesdata(ts_codes IN VARCHAR2,
+                           summary_interval IN VARCHAR2 DEFAULT '') AS
     data_ string_string_hash;
     first_loop BOOLEAN := TRUE;
   BEGIN
     htp_json_array_open();
     FOR ts IN
     (
+      -- http://tkyte.blogspot.com/2006/06/varying-in-lists.html
+      WITH ts_codes_split AS
+      (
+        SELECT
+          trim(substr(txt,
+                      instr(txt, ',', 1, level) + 1,
+                      instr(txt, ',', 1, level + 1)
+                        - instr(txt, ',', 1, level) - 1))
+          AS token
+        FROM (SELECT ',' || ts_codes || ',' txt FROM dual)
+        CONNECT BY level <= length(ts_codes) - length(replace(ts_codes, ',', '')) + 1
+      )
       SELECT
-        t.ts_code,
-        t.date_time,
-        t.value,
-        t.quality_code
+        CASE
+          WHEN summary_interval = 'hourly' THEN
+            trunc(t.date_time, 'HH')
+          WHEN summary_interval = 'daily' THEN
+            trunc(t.date_time, 'DD')
+          WHEN summary_interval = 'weekly' THEN
+            trunc(t.date_time, 'WW')
+          WHEN summary_interval = 'monthly' THEN
+            trunc(t.date_time, 'MM')
+          ELSE
+            t.date_time
+          END date_time,
+        AVG(t.value) value,
+        MAX(t.quality_code) quality_code
       FROM cwms_v_tsv t
-      WHERE t.ts_code = timeseriesdata.ts_code
+      WHERE t.ts_code IN (SELECT * FROM ts_codes_split)
+      GROUP BY
+        CASE
+          WHEN summary_interval = 'hourly' THEN trunc(t.date_time, 'HH')
+          WHEN summary_interval = 'daily' THEN trunc(t.date_time, 'DD')
+          WHEN summary_interval = 'weekly' THEN trunc(t.date_time, 'WW')
+          WHEN summary_interval = 'monthly' THEN trunc(t.date_time, 'MM')
+          ELSE t.date_time END
     )
     LOOP
       IF NOT first_loop THEN
@@ -243,7 +275,6 @@ CREATE OR REPLACE PACKAGE BODY JSONAPI AS
       ELSE
         first_loop := false;
       END IF;
-      data_('ts_code') := or_null(ts.ts_code);
       data_('date_time') := format_date(ts.date_time);
       data_('value') := or_null(ts.value);
       data_('quality_code') := or_null(ts.quality_code);
