@@ -192,7 +192,7 @@ The methods of accessing each of these models are described below.
 
 <p>To retrieve timeseries data from a given location:</p>
 
-<pre><code>.timeseriesdata?ts_codes=TS_CODE,TS_CODE&amp;summary_interval=SUMMARY_INTERVAL
+<pre><code>.timeseriesdata?ts_codes=TS_CODE,TS_CODE&amp;summary_interval=SUMMARY_INTERVAL&amp;floor=FLOOR
 </code></pre>
 
 <h4>
@@ -215,6 +215,11 @@ Parameters
       <li>monthly</li>
     </ul>
     If no value is specified, or an invalid value is passed, the data are not summarized.
+  </li>
+  <li><strong>floor</strong>:
+    [number, default = NULL]
+    if specified, will drop all timeseries values less than the floor value.
+    Useful mostly in combination with summary_interval, since these values are dropped before data aggregation.
   </li>
 </ul>
 
