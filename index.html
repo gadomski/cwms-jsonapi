@@ -77,6 +77,29 @@ Content-Language: en
 </code></pre>
 
 <h3>
+<a name="jsonp" class="anchor" href="#jsonp"><span class="octicon octicon-link"></span></a>JSONP</h3>
+
+<p>
+<a href="http://en.wikipedia.org/wiki/JSONP">JSONP</a> is a communication technique that can be used to circumvent the same-origin policy.
+To wrap any <strong>cwms-jsonapi</strong> response in a JSONP callback, add the parameter <code>jsonp=somecallbackname</code> to your url.
+For example:
+</p>
+
+<pre>
+<code>
+.locations?db_office_id=MYOFFICE&amp;jsonp=mycallback
+</code>
+</pre>
+
+<p>will produce a response that might look like this:</p>
+
+<pre>
+<code>
+mycallback([...])
+</code>
+</pre>
+
+<h3>
 <a name="http-verbs" class="anchor" href="#http-verbs"><span class="octicon octicon-link"></span></a>HTTP Verbs</h3>
 
 <p>The API only explicitly accepts <code>GET</code> requests, though it may respond to requests of other types (buyer beware).</p>
