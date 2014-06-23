@@ -3,17 +3,23 @@ CREATE OR REPLACE PACKAGE JSONAPI AS
   TYPE string_string_hash IS TABLE OF VARCHAR2(200) INDEX BY VARCHAR2(64);
 
   PROCEDURE locations(db_office_id IN VARCHAR2,
-                      unit_system IN VARCHAR2 DEFAULT 'SI');
+                      unit_system IN VARCHAR2 DEFAULT 'SI',
+                      jsonp IN VARCHAR2 DEFAULT '');
 
   PROCEDURE locations(location_id IN VARCHAR2,
-                unit_system IN VARCHAR2 DEFAULT 'SI');
+                unit_system IN VARCHAR2 DEFAULT 'SI',
+                jsonp IN VARCHAR2 DEFAULT '');
 
-  PROCEDURE timeseries(location_id IN VARCHAR2);
+  PROCEDURE timeseries(location_id IN VARCHAR2,
+                jsonp IN VARCHAR2 DEFAULT '');
 
-  PROCEDURE timeseries(ts_code IN NUMBER);
+  PROCEDURE timeseries(ts_code IN NUMBER,
+                jsonp IN VARCHAR2 DEFAULT '');
     
   PROCEDURE timeseriesdata(ts_codes IN VARCHAR2,
-                           summary_interval IN VARCHAR2 DEFAULT '');
+                           summary_interval IN VARCHAR2 DEFAULT '',
+                           floor IN NUMBER DEFAULT NULL,
+                           jsonp IN VARCHAR2 DEFAULT '');
 
 
 END JSONAPI;
@@ -44,6 +50,20 @@ CREATE OR REPLACE PACKAGE BODY JSONAPI AS
     END IF;
   END or_null;
   
+  PROCEDURE jsonp_open(jsonp IN VARCHAR2) AS
+  BEGIN
+    IF jsonp IS NOT NULL THEN
+      htp.prn(jsonp || '(');
+    END IF;
+  END jsonp_open;
+  
+  PROCEDURE jsonp_close(jsonp IN VARCHAR2) AS
+  BEGIN
+    IF jsonp IS NOT NULL THEN
+      htp.prn(');');
+    END IF;
+  END jsonp_close;
+  
   PROCEDURE htp_json_header AS
   BEGIN
     owa_util.mime_header('application/json');
@@ -51,7 +71,6 @@ CREATE OR REPLACE PACKAGE BODY JSONAPI AS
   
   PROCEDURE htp_json_array_open AS
   BEGIN
-    htp_json_header();
     htp.prn('[');
   END htp_json_array_open;
   
@@ -62,7 +81,6 @@ CREATE OR REPLACE PACKAGE BODY JSONAPI AS
   
   PROCEDURE htp_json_object_open AS
   BEGIN
-    htp_json_header();
     htp.prn('{');
   END htp_json_object_open;
   
@@ -94,10 +112,13 @@ CREATE OR REPLACE PACKAGE BODY JSONAPI AS
   END htp_json_object;
 
   PROCEDURE locations(db_office_id IN VARCHAR2,
-                      unit_system IN VARCHAR2 DEFAULT 'SI') AS
+                      unit_system IN VARCHAR2 DEFAULT 'SI',
+                      jsonp IN VARCHAR2 DEFAULT '') AS
     data_ string_string_hash;
     first_loop BOOLEAN := TRUE;
   BEGIN
+    htp_json_header();
+    jsonp_open(jsonp);
     htp_json_array_open();
     FOR location_ IN
     (
@@ -139,13 +160,17 @@ CREATE OR REPLACE PACKAGE BODY JSONAPI AS
       htp_json_object(data_);
     END LOOP;
     htp_json_array_close();
+    jsonp_close(jsonp);
   END locations;
   
   PROCEDURE locations(location_id IN VARCHAR2,
-                unit_system IN VARCHAR2 DEFAULT 'SI') AS
+                unit_system IN VARCHAR2 DEFAULT 'SI',
+                jsonp IN VARCHAR2 DEFAULT '') AS
     data_ string_string_hash;
     row_ cwms_v_loc%rowtype;
   BEGIN
+    htp_json_header();
+    jsonp_open(jsonp);
     htp_json_object_open();
     SELECT *
       INTO row_
@@ -168,12 +193,16 @@ CREATE OR REPLACE PACKAGE BODY JSONAPI AS
     
     htp_json_object(data_, FALSE);
     htp_json_object_close();
+    jsonp_close(jsonp);
   END locations;
   
-  PROCEDURE timeseries(location_id IN VARCHAR2) AS
+  PROCEDURE timeseries(location_id IN VARCHAR2,
+                       jsonp IN VARCHAR2 DEFAULT '') AS
     data_ string_string_hash;
     first_loop BOOLEAN := TRUE;
   BEGIN
+    htp_json_header();
+    jsonp_open(jsonp);
     htp_json_array_open();
     FOR ts IN
     (
@@ -202,12 +231,16 @@ CREATE OR REPLACE PACKAGE BODY JSONAPI AS
       htp_json_object(data_);
     END LOOP;
     htp_json_array_close();
+    jsonp_close(jsonp);
   END timeseries;
   
-  PROCEDURE timeseries(ts_code IN NUMBER) AS
+  PROCEDURE timeseries(ts_code IN NUMBER,
+        jsonp IN VARCHAR2 DEFAULT '') AS
     data_ string_string_hash;
     row_ cwms_v_ts_id%rowtype;
   BEGIN
+    htp_json_header();
+    jsonp_open(jsonp);
     htp_json_object_open();
     SELECT *
       INTO row_
@@ -222,13 +255,18 @@ CREATE OR REPLACE PACKAGE BODY JSONAPI AS
     data_('ts_code') := or_null(row_.ts_code);
     htp_json_object(data_, FALSE);
     htp_json_object_close();
+    jsonp_close(jsonp);
   END timeseries;
   
   PROCEDURE timeseriesdata(ts_codes IN VARCHAR2,
-                           summary_interval IN VARCHAR2 DEFAULT '') AS
+                           summary_interval IN VARCHAR2 DEFAULT '',
+                           floor IN NUMBER DEFAULT NULL,
+                           jsonp IN VARCHAR2 DEFAULT '') AS
     data_ string_string_hash;
     first_loop BOOLEAN := TRUE;
   BEGIN
+    htp_json_header();
+    jsonp_open(jsonp);
     htp_json_array_open();
     FOR ts IN
     (
@@ -258,10 +296,19 @@ CREATE OR REPLACE PACKAGE BODY JSONAPI AS
             t.date_time
           END date_time,
         AVG(t.value) value,
-        MAX(t.quality_code) quality_code
+        MAX(t.quality_code) quality_code,
+        COUNT(*) count
       FROM cwms_v_tsv t
       WHERE t.ts_code IN (SELECT * FROM ts_codes_split)
+        AND t.value >= COALESCE(timeseriesdata.floor, t.value)
       GROUP BY
+        CASE
+          WHEN summary_interval = 'hourly' THEN trunc(t.date_time, 'HH')
+          WHEN summary_interval = 'daily' THEN trunc(t.date_time, 'DD')
+          WHEN summary_interval = 'weekly' THEN trunc(t.date_time, 'WW')
+          WHEN summary_interval = 'monthly' THEN trunc(t.date_time, 'MM')
+          ELSE t.date_time END
+      ORDER BY
         CASE
           WHEN summary_interval = 'hourly' THEN trunc(t.date_time, 'HH')
           WHEN summary_interval = 'daily' THEN trunc(t.date_time, 'DD')
@@ -278,9 +325,11 @@ CREATE OR REPLACE PACKAGE BODY JSONAPI AS
       data_('date_time') := format_date(ts.date_time);
       data_('value') := or_null(ts.value);
       data_('quality_code') := or_null(ts.quality_code);
+      data_('count') := ts.count;
       htp_json_object(data_);
     END LOOP;
     htp_json_array_close();
+    jsonp_close(jsonp);
   END timeseriesdata;
 
 END JSONAPI;
