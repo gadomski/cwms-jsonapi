@@ -19,9 +19,9 @@ CREATE OR REPLACE PACKAGE JSONAPI AS
   PROCEDURE timeseriesdata(ts_codes IN VARCHAR2,
                            summary_interval IN VARCHAR2 DEFAULT '',
                            floor IN NUMBER DEFAULT NULL,
-                           jsonp IN VARCHAR2 DEFAULT '');
-
-
+                           jsonp IN VARCHAR2 DEFAULT '',
+                           circular IN VARCHAR2 DEFAULT '');
+  
 END JSONAPI;
 /
 
@@ -37,7 +37,7 @@ CREATE OR REPLACE PACKAGE BODY JSONAPI AS
   FUNCTION format_date(value_ IN DATE)
   RETURN VARCHAR2 AS
   BEGIN
-    return quote(TO_CHAR(value_, 'IYYY-MM-DD') || 'T' || TO_CHAR(value_, 'HH24:MI:SS'));
+    return quote(TO_CHAR(value_, 'YYYY-MM-DD') || 'T' || TO_CHAR(value_, 'HH24:MI:SS'));
   END format_date;
   
   FUNCTION or_null(value_ IN NUMBER)
@@ -261,7 +261,8 @@ CREATE OR REPLACE PACKAGE BODY JSONAPI AS
   PROCEDURE timeseriesdata(ts_codes IN VARCHAR2,
                            summary_interval IN VARCHAR2 DEFAULT '',
                            floor IN NUMBER DEFAULT NULL,
-                           jsonp IN VARCHAR2 DEFAULT '') AS
+                           jsonp IN VARCHAR2 DEFAULT '',
+                           circular IN VARCHAR2 DEFAULT '') AS
     data_ string_string_hash;
     first_loop BOOLEAN := TRUE;
   BEGIN
@@ -295,7 +296,10 @@ CREATE OR REPLACE PACKAGE BODY JSONAPI AS
           ELSE
             t.date_time
           END date_time,
-        AVG(t.value) value,
+        CASE
+          WHEN circular = 'true' THEN circular_avg(t.value)
+          ELSE AVG(t.value)
+          END value,
         MAX(t.quality_code) quality_code,
         COUNT(*) count
       FROM cwms_v_tsv t
