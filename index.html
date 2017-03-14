@@ -56,7 +56,7 @@ Content-Language: en
 
 <p>Blank fields are included as <code>null</code> instead of being omitted.</p>
 
-<p>All timestamps are returned in ISO 8601 format:</p>
+<p>All timestamps are in Coordinated Universal Time (<a href="https://en.wikipedia.org/wiki/Coordinated_Universal_Time">UTC</a>) and in the ISO 8601 format:</p>
 
 <pre><code>YYYY-MM-DDTHH:MM:SSZ
 </code></pre>
@@ -139,7 +139,7 @@ The methods of accessing each of these models are described below.
 <div class="highlight highlight-json"><pre><span class="p">[</span>
   <span class="p">{</span>
     <span class="nt">"active_flag"</span><span class="p">:</span> <span class="s2">"T"</span><span class="p">,</span>
-    <span class="nt">"db_office_id"</span><span class="p">:</span> <span class="s2">"NAE"</span><span class="p">,</span> 
+    <span class="nt">"db_office_id"</span><span class="p">:</span> <span class="s2">"NAE"</span><span class="p">,</span>
     <span class="nt">"elevation"</span><span class="p">:</span> <span class="mf">102.12</span><span class="p">,</span>
     <span class="nt">"longtitude"</span><span class="p">:</span> <span class="mf">-72.6219</span><span class="p">,</span>
     <span class="nt">"latitude"</span><span class="p">:</span> <span class="mf">42.3108</span><span class="p">,</span>
@@ -192,7 +192,7 @@ The methods of accessing each of these models are described below.
 
 <p>To retrieve timeseries data from a given location:</p>
 
-<pre><code>.timeseriesdata?ts_codes=TS_CODE,TS_CODE&amp;summary_interval=SUMMARY_INTERVAL&amp;floor=FLOOR
+<pre><code>.timeseriesdata?ts_codes=TS_CODE,TS_CODE&amp;summary_interval=SUMMARY_INTERVAL&amp;floor=FLOOR&amp;circular=CIRCULAR
 </code></pre>
 
 <h4>
@@ -221,17 +221,21 @@ Parameters
     if specified, will drop all timeseries values less than the floor value.
     Useful mostly in combination with summary_interval, since these values are dropped before data aggregation.
   </li>
+  <li><strong>circular</strong>:
+    [boolean, default = "false" (lowercase)]
+    whether to use <a href="https://en.wikipedia.org/wiki/Mean_of_circular_quantities">circular</a> (rather than regular) averaging (e.g. for wind direction).
+  </li>
 </ul>
 
 
 <h4>
 <a name="response-2" class="anchor" href="#response-2"><span class="octicon octicon-link"></span></a>Response</h4>
 
-<p>The quality_code is the maximum value among all aggregate data points, the value is an average, and the date_time is the grouping timestamp.</p>
+<p>The quality_code is the maximum value among all aggregate data points, the value is an average, and the date_time is the timestamp for the start of the grouping interval.</p>
 
 <div class="highlight highlight-json"><pre><span class="p">[</span>
   <span class="p">{</span>
-    <span class="nt">"date_time"</span><span class="p">:</span> <span class="s2">"2007-06-01T00:00:00"</span><span class="p">,</span>
+    <span class="nt">"date_time"</span><span class="p">:</span> <span class="s2">"2007-06-01T00:00:00Z"</span><span class="p">,</span>
     <span class="nt">"quality_code"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
     <span class="nt">"value"</span><span class="p">:</span> <span class="mf">489.31999999999999</span>
   <span class="p">}</span>
@@ -256,6 +260,6 @@ Parameters
       </div>
     </div>
 
-  
+
   </body>
 </html>
