@@ -37,7 +37,7 @@ CREATE OR REPLACE PACKAGE BODY JSONAPI AS
   FUNCTION format_date(value_ IN DATE)
   RETURN VARCHAR2 AS
   BEGIN
-    return quote(TO_CHAR(value_, 'YYYY-MM-DD') || 'T' || TO_CHAR(value_, 'HH24:MI:SS'));
+    return quote(TO_CHAR(value_, 'YYYY-MM-DD') || 'T' || TO_CHAR(value_, 'HH24:MI:SS') || 'Z');
   END format_date;
   
   FUNCTION or_null(value_ IN NUMBER)
