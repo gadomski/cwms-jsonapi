@@ -1,4 +1,4 @@
-CREATE OR REPLACE PACKAGE JSONAPI AS 
+CREATE OR REPLACE PACKAGE JSONAPI AS
 
   TYPE string_string_hash IS TABLE OF VARCHAR2(200) INDEX BY VARCHAR2(64);
 
@@ -15,13 +15,13 @@ CREATE OR REPLACE PACKAGE JSONAPI AS
 
   PROCEDURE timeseries(ts_code IN NUMBER,
                 jsonp IN VARCHAR2 DEFAULT '');
-    
+
   PROCEDURE timeseriesdata(ts_codes IN VARCHAR2,
                            summary_interval IN VARCHAR2 DEFAULT '',
                            floor IN NUMBER DEFAULT NULL,
                            jsonp IN VARCHAR2 DEFAULT '',
                            circular IN VARCHAR2 DEFAULT '');
-  
+
 END JSONAPI;
 /
 
@@ -39,7 +39,7 @@ CREATE OR REPLACE PACKAGE BODY JSONAPI AS
   BEGIN
     return quote(TO_CHAR(value_, 'YYYY-MM-DD') || 'T' || TO_CHAR(value_, 'HH24:MI:SS') || 'Z');
   END format_date;
-  
+
   FUNCTION or_null(value_ IN NUMBER)
   RETURN VARCHAR2 AS
   BEGIN
@@ -49,46 +49,46 @@ CREATE OR REPLACE PACKAGE BODY JSONAPI AS
       return value_;
     END IF;
   END or_null;
-  
+
   PROCEDURE jsonp_open(jsonp IN VARCHAR2) AS
   BEGIN
     IF jsonp IS NOT NULL THEN
       htp.prn(jsonp || '(');
     END IF;
   END jsonp_open;
-  
+
   PROCEDURE jsonp_close(jsonp IN VARCHAR2) AS
   BEGIN
     IF jsonp IS NOT NULL THEN
       htp.prn(');');
     END IF;
   END jsonp_close;
-  
+
   PROCEDURE htp_json_header AS
   BEGIN
     owa_util.mime_header('application/json');
   END htp_json_header;
-  
+
   PROCEDURE htp_json_array_open AS
   BEGIN
     htp.prn('[');
   END htp_json_array_open;
-  
+
   PROCEDURE htp_json_array_close AS
   BEGIN
     htp.prn(']');
   END htp_json_array_close;
-  
+
   PROCEDURE htp_json_object_open AS
   BEGIN
     htp.prn('{');
   END htp_json_object_open;
-  
+
   PROCEDURE htp_json_object_close AS
   BEGIN
     htp.prn('}');
   END htp_json_object_close;
-  
+
   PROCEDURE htp_json_object(data_ string_string_hash,
                             include_brackets IN BOOLEAN DEFAULT TRUE) AS
     first_loop BOOLEAN;
@@ -162,7 +162,7 @@ CREATE OR REPLACE PACKAGE BODY JSONAPI AS
     htp_json_array_close();
     jsonp_close(jsonp);
   END locations;
-  
+
   PROCEDURE locations(location_id IN VARCHAR2,
                 unit_system IN VARCHAR2 DEFAULT 'SI',
                 jsonp IN VARCHAR2 DEFAULT '') AS
@@ -177,7 +177,7 @@ CREATE OR REPLACE PACKAGE BODY JSONAPI AS
       FROM cwms_v_loc l
       WHERE l.location_id = locations.location_id
         AND l.unit_system = locations.unit_system;
-    
+
     data_('db_office_id') := quote(row_.db_office_id);
     data_('location_id') := quote(row_.location_id);
     data_('location_type') := quote(row_.location_type);
@@ -190,12 +190,12 @@ CREATE OR REPLACE PACKAGE BODY JSONAPI AS
     data_('state_initial') := quote(row_.state_initial);
     data_('long_name') := quote(row_.long_name);
     data_('active_flag') := quote(row_.active_flag);
-    
+
     htp_json_object(data_, FALSE);
     htp_json_object_close();
     jsonp_close(jsonp);
   END locations;
-  
+
   PROCEDURE timeseries(location_id IN VARCHAR2,
                        jsonp IN VARCHAR2 DEFAULT '') AS
     data_ string_string_hash;
@@ -233,7 +233,7 @@ CREATE OR REPLACE PACKAGE BODY JSONAPI AS
     htp_json_array_close();
     jsonp_close(jsonp);
   END timeseries;
-  
+
   PROCEDURE timeseries(ts_code IN NUMBER,
         jsonp IN VARCHAR2 DEFAULT '') AS
     data_ string_string_hash;
@@ -257,7 +257,7 @@ CREATE OR REPLACE PACKAGE BODY JSONAPI AS
     htp_json_object_close();
     jsonp_close(jsonp);
   END timeseries;
-  
+
   PROCEDURE timeseriesdata(ts_codes IN VARCHAR2,
                            summary_interval IN VARCHAR2 DEFAULT '',
                            floor IN NUMBER DEFAULT NULL,
